@@ -84,13 +84,28 @@ model UserSecret {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  uuid        String   @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String
-  description String
-  categoryId  Int
+  id           Int      @id @default(autoincrement())
+  uuid         String   @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  updatedBy    Int
+  name         String
+  description  String
+  categoryId   Int
+  productPrice Price?
+}
+
+model Price {
+  id                   Int      @id @default(autoincrement())
+  uuid                 String   @default(uuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  updatedBy            Int
+  suggestedRetailPrice Decimal
+  originalPrice        Decimal
+  discountedPrice      Decimal
+  product              Product  @relation(fields: [productId], references: [id])
+  productId            Int      @unique
 }
 
 model Category {
