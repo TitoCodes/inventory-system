@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  uuid          String       @default(uuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  email         String       @unique
+  userSecret    UserSecret?
+  profile       UserProfile?
+  isActive      Boolean?
+  activatedAt   DateTime
+  deactivatedAt DateTime
+  otp           String
+  userRole      Role         @default(SYSTEMUSER)
+  userAddressId Int?
+  userContactId Int?
+}
+
+model Supplier {
+  id                Int      @id @default(autoincrement())
+  uuid              String   @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  supplierAddressId Int?
+  supplierContactId Int?
+  name              String   @db.VarChar(300)
+  description       String   @db.VarChar(1000)
+}
+
+model Contact {
+  id              Int      @id @default(autoincrement())
+  uuid            String   @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  mobileNumber    String
+  telephoneNumber String
+}
+
+model UserProfile {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  updatedBy  Int
+  firstName  String   @db.VarChar(750)
+  middleName String   @db.VarChar(750)
+  lastName   String   @db.VarChar(750)
+  sex        Sex
+  birthDate  DateTime
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int      @unique
+}
+
+model Address {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  updatedBy Int
+  country   String
+  city      String
+  zipCode   String
+  address   String
+}
+
+model UserSecret {
+  id           Int      @id @default(autoincrement())
+  uuid         String   @default(uuid())
+  email        String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  name         String?
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int      @unique
+  passwordHash String?
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String
+  categoryId  Int
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum Role {
+  SYSTEMADMIN
+  ADMIN
+  SYSTEMUSER
+  CUSTOMER
+}
