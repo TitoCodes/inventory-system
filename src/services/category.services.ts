@@ -1,9 +1,8 @@
-import { Category, Prisma, PrismaClient } from "@prisma/client";
+import prisma from "../../prisma/client";
+import { Category, Prisma } from "@prisma/client";
 import { PageList } from "../core/pageList";
 import { UpdateCategoryDto } from "../dto/category/updateCategory.dto";
 import { CreateCategoryDto } from "../dto/category/createCategory.dto";
-
-const prisma = new PrismaClient();
 
 const getCategories = async (pageList: PageList<Category>) => {
   const { searchString, skip, take, orderBy } = pageList;
@@ -27,7 +26,7 @@ const getCategories = async (pageList: PageList<Category>) => {
     },
     where: {
       ...or,
-      isDeleted:null
+      isDeleted: null,
     },
     take: Number(take) || undefined,
     skip: Number(skip) || undefined,
@@ -39,7 +38,7 @@ const getCategories = async (pageList: PageList<Category>) => {
 };
 
 const getCategoryByid = async (id: string) => {
-  const category = await prisma.category.findFirst({
+  return await prisma.category.findFirst({
     where: {
       uuid: id,
       isDeleted: null,
@@ -52,8 +51,6 @@ const getCategoryByid = async (id: string) => {
       uuid: true,
     },
   });
-
-  return category;
 };
 
 const createCategory = async (model: CreateCategoryDto) => {
@@ -97,7 +94,7 @@ const updateCategory = async (model: UpdateCategoryDto) => {
       createdAt: true,
       updatedAt: true,
     },
-    where: { id: categoryData.id || undefined },
+    where: { id: categoryData.id },
     data: {
       name: model.name,
       description: model.description,
@@ -124,7 +121,7 @@ const deleteCategory = async (id: string) => {
     select: {
       uuid: true,
     },
-    where: { id: categoryData.id || undefined },
+    where: { id: categoryData.id },
     data: {
       isDeleted: true,
       deletedAt: new Date(),

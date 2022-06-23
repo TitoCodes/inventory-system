@@ -10,7 +10,8 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "incremental": true
+    "incremental": true,
+    "strictNullChecks":true
   },
   "exclude": [
     "node_modules",
