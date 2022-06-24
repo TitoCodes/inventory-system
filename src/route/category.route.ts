@@ -1,12 +1,14 @@
 import express from "express";
 import { CreateCategoryDto } from "../dto/category/createCategory.dto";
 import errorHandler from "../handler/error.handler";
-import categoryServices from "../services/category.services";
+import CategoryServices from "../service/category.service";
 import { PageList } from "../core/pageList";
 import { Category } from "@prisma/client";
 import { UpdateCategoryDto } from "../dto/category/updateCategory.dto";
+import Validator from "../middleware/validator";
 
 const router = express.Router();
+let categoryServices = new CategoryServices();
 
 router.get("/", async (req: any, res: any) => {
   const { searchString, skip, take, orderBy } = req.query;
@@ -36,18 +38,22 @@ router.get(`/:id`, async (req: any, res: any) => {
     });
 });
 
-router.post(`/`, async (req: any, res: any) => {
-  const { name, description } = req.body;
+router.post(
+  `/`,
+  Validator("createCategory"),
+  async (req: any, res: any) => {
+    const { name, description } = req.body;
 
-  await categoryServices
-    .createCategory(new CreateCategoryDto(name, description))
-    .then(() => {
-      res.status(201).json();
-    })
-    .catch((error) => {
-      errorHandler(error, res);
-    });
-});
+    await categoryServices
+      .createCategory(new CreateCategoryDto(name, description))
+      .then(() => {
+        res.status(201).json();
+      })
+      .catch((error) => {
+        errorHandler(error, res);
+      });
+  }
+);
 
 router.delete(`/:id`, async (req: any, res: any) => {
   const { id } = req.params;
@@ -62,18 +68,22 @@ router.delete(`/:id`, async (req: any, res: any) => {
     });
 });
 
-router.put("/:id", async (req: any, res: any) => {
-  const { id } = req.params;
-  const { name, description } = req.body;
+router.put(
+  "/:id",
+  Validator("updateCategory"),
+  async (req: any, res: any) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
 
-  await categoryServices
-    .updateCategory(new UpdateCategoryDto(name, description, id))
-    .then(() => {
-      res.status(204).json();
-    })
-    .catch((error) => {
-      errorHandler(error, res);
-    });
-});
+    await categoryServices
+      .updateCategory(new UpdateCategoryDto(name, description, id))
+      .then(() => {
+        res.status(204).json();
+      })
+      .catch((error) => {
+        errorHandler(error, res);
+      });
+  }
+);
 
 export default router;
