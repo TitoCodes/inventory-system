@@ -109,12 +109,14 @@ model Price {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  uuid        String   @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String
-  description String
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  isDeleted   Boolean?
+  name        String    @unique @db.VarChar(250)
+  description String    @db.VarChar(1000)
 }
 
 enum Sex {

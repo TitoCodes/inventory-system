@@ -1,0 +1,55 @@
+@categoryId = 40c05336-daa7-439c-b1b4-e7f8f9c9cac0
+@categoryName = toys
+@toBeDeletedCategoryId = 246867ec-d565-4c63-a0ec-c3e1090af120
+
+###
+# Create a new category
+###
+POST {{host}}/category HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Deleted Category",
+    "description": "This will be deleted"
+}
+
+###
+# Get category by id
+###
+GET {{host}}/category/{{categoryId}} HTTP/1.1
+content-type: application/json
+
+###
+# Get the categories with default pagination and search
+###
+GET {{host}}/category HTTP/1.1
+content-type: application/json
+
+###
+# Get the categories with pagination
+###
+GET {{host}}/category?take=5&skip=0 HTTP/1.1
+content-type: application/json
+
+###
+# Get the categories with pagination and search
+###
+GET {{host}}/category?searchString=toys&take=5&skip=0 HTTP/1.1
+content-type: application/json
+
+###
+# Update category
+###
+PUT {{host}}/category/{{categoryId}} HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Toys",
+    "description": "All toys category"
+}
+
+###
+# Delete category
+###
+DELETE  {{host}}/category/{{toBeDeletedCategoryId}} HTTP/1.1
+content-type: application/json
