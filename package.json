@@ -7,7 +7,7 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc --project ./",
     "start": "node dist/src/server.js",
-    "test": "jest",
+    "test": "jest -i",
     "test-coverage": "npx jest --coverage"
   },
   "keywords": [],
