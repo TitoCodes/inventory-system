@@ -5,6 +5,12 @@ import { UpdateCategoryDto } from "../dto/category/updateCategory.dto";
 import { CreateCategoryDto } from "../dto/category/createCategory.dto";
 
 class CategoryServices {
+  /**
+   * Get categories by searchstring and pagination
+   * 
+   * @param pageList pageList object
+   * @returns List of Categories with pagination
+   */
   async getCategories(pageList: PageList<Category>) {
     const { searchString, skip, take, orderBy } = pageList;
 
@@ -38,6 +44,11 @@ class CategoryServices {
     return categories;
   }
 
+  /**
+   * Get category by uuid
+   * @param id uuid of the category
+   * @returns Category
+   */
   async getCategoryByid(id: string) {
     return await prisma.category.findFirst({
       where: {
@@ -54,6 +65,12 @@ class CategoryServices {
     });
   }
 
+  /**
+   * Create a new category
+   * 
+   * @param model CreateCategoryDto
+   * @returns Boolean
+   */
   async createCategory(model: CreateCategoryDto) {
     let { name, description } = model;
 
@@ -75,6 +92,12 @@ class CategoryServices {
     return true;
   }
 
+  /**
+   * Update an existing category
+   * 
+   * @param model UpdateCategoryDto
+   * @returns Boolean
+   */
   async updateCategory(model: UpdateCategoryDto) {
     const categoryData = await prisma.category.findUnique({
       where: { uuid: model.uuid },
@@ -106,6 +129,12 @@ class CategoryServices {
     return updatedcategory;
   }
 
+  /**
+   * Delete a category
+   * 
+   * @param id uuid of the category
+   * @returns Boolean
+   */
   async deleteCategory(id: string) {
     const categoryData = await prisma.category.findUnique({
       where: { uuid: id },

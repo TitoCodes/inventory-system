@@ -1,0 +1,56 @@
+@itemId = 943c06c0-f31c-48ad-9c01-5b6a0469cb3a
+@toBeDeletedItemId = 943c06c0-f31c-48ad-9c01-5b6a0469cb3a
+
+###
+# Create a new item
+###
+POST {{host}}/item HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Xiaomi Pod",
+    "description": "Xiaomi Tablet",
+    "categoryId":"78889810-e748-44b1-b4f7-e020bc3ef090",
+    "isDraft":true
+}
+
+###
+# Get item by id
+###
+GET {{host}}/item/{{itemId}} HTTP/1.1
+content-type: application/json
+
+###
+# Get the items with default pagination and search
+###
+GET {{host}}/item HTTP/1.1
+content-type: application/json
+
+###
+# Get the item with pagination
+###
+GET {{host}}/item?take=5&skip=0 HTTP/1.1
+content-type: application/json
+
+
+###
+# Get the categories with pagination and search
+###
+GET {{host}}/item?searchString=Ipad&take=5&skip=0 HTTP/1.1
+content-type: application/json
+
+###
+# Update item
+###
+PUT {{host}}/item/{{itemId}} HTTP/1.1
+content-type: application/json
+
+{
+    "isDraft":false
+}
+
+###
+# Delete item
+###
+DELETE  {{host}}/item/{{toBeDeletedItemId}} HTTP/1.1
+content-type: application/json
