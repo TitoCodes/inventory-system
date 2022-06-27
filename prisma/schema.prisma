@@ -83,16 +83,16 @@ model UserSecret {
   passwordHash String?
 }
 
-model Product {
-  id           Int      @id @default(autoincrement())
-  uuid         String   @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  updatedBy    Int
-  name         String
-  description  String
-  categoryId   Int
-  productPrice Price?
+model Item {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  updatedBy   Int
+  name        String
+  description String
+  categoryId  Int
+  itemPrice   Price?
 }
 
 model Price {
@@ -104,8 +104,8 @@ model Price {
   suggestedRetailPrice Decimal
   originalPrice        Decimal
   discountedPrice      Decimal
-  product              Product  @relation(fields: [productId], references: [id])
-  productId            Int      @unique
+  item                 Item     @relation(fields: [itemId], references: [id])
+  itemId               Int      @unique
 }
 
 model Category {
