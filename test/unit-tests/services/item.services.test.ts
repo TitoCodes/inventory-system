@@ -97,6 +97,17 @@ describe("Create item", () => {
       `${newItem.categoryId} id  is not an existing category`
     );
   });
+
+  test("should throw error from prisma.create", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findFirst.mockResolvedValue(category);
+    prismaMock.item.findUnique.mockResolvedValue(null);
+    prismaMock.item.create.mockRejectedValue(error);
+
+    await expect(itemService.createItem(newItem)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
 });
 
 describe("Update item", () => {
@@ -138,6 +149,26 @@ describe("Update item", () => {
     );
   });
 
+  test("should throw error from prisma.findUnique", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.item.findUnique.mockRejectedValue(error);
+
+    await expect(itemService.updateItem(updateItem)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
+
+  test("should throw error from prisma.update", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findFirst.mockResolvedValue(category);
+    prismaMock.item.findUnique.mockResolvedValue(expectedItem);
+    prismaMock.item.update.mockRejectedValue(error);
+
+    await expect(itemService.updateItem(updateItem)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
+
   test("should throw item id is not existing error", async () => {
     prismaMock.category.findFirst.mockResolvedValue(category);
     prismaMock.item.findUnique.mockResolvedValue(null);
@@ -149,62 +180,89 @@ describe("Update item", () => {
   });
 });
 
-// describe("Delete category", () => {
-//   test("should delete a category", async () => {
-//     prismaMock.category.findUnique.mockResolvedValue(expectedCategory);
-//     prismaMock.category.update.mockResolvedValue(expectedCategory);
+describe("Delete item", () => {
+  let toBeDeletedId = "dsaddsa-sadjasd-23123-dsadads";
+  test("should delete an item", async () => {
+    prismaMock.item.findUnique.mockResolvedValue(expectedItem);
+    prismaMock.item.update.mockResolvedValue(expectedItem);
 
-//     let result = await categoryServices.deleteCategory(expectedCategory.uuid);
-//     expect(result).toBe(true);
-//   });
+    let result = await itemService.deleteItem(toBeDeletedId);
+    expect(result).toBe(true);
+  });
 
-//   test("should throw not existing error", async () => {
-//     prismaMock.category.findUnique.mockResolvedValue(null);
+  test("should throw not existing error", async () => {
+    prismaMock.item.findUnique.mockResolvedValue(null);
 
-//     await expect(
-//       categoryServices.deleteCategory(expectedCategory.uuid)
-//     ).rejects.toThrowError(
-//       `${expectedCategory.uuid} id is not an existing category`
-//     );
-//   });
-// });
+    await expect(itemService.deleteItem(toBeDeletedId)).rejects.toThrowError(
+      `${toBeDeletedId} id is not an existing item`
+    );
+  });
 
-// describe("Get category by id", () => {
-//   test("retrieve category by id", async () => {
-//     let categoryId = "40c05336-daa7-439c-b1b4-e7f8f9c9cac0";
-//     prismaMock.category.findFirst.mockResolvedValue(expectedCategory);
+  test("should throw error from prisma.findUnique", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.item.findUnique.mockRejectedValue(error);
 
-//     await expect(categoryServices.getCategoryByid(categoryId)).resolves.toEqual(
-//       {
-//         id: 1,
-//         name: "category",
-//         description: "sample description",
-//         uuid: "dsad-3213-das213-adsa",
-//         createdAt: createdAt,
-//         updatedAt: updatedAt,
-//         deletedAt: null,
-//         isDeleted: null,
-//       }
-//     );
-//   });
-// });
+    await expect(itemService.deleteItem(toBeDeletedId)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
 
-// describe("Get categories", () => {
-//   test("retrieve categories", async () => {
-//     prismaMock.category.findMany.mockResolvedValue(expectedCategories);
+  test("should throw error from prisma.update", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.item.findUnique.mockResolvedValue(expectedItem);
+    prismaMock.item.update.mockRejectedValue(error);
 
-//     let result = await categoryServices.getCategories(
-//       new PageList("", undefined, undefined, undefined)
-//     );
-//     expect(result.length).toBe(2);
-//   });
+    await expect(itemService.deleteItem(toBeDeletedId)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
+});
 
-//   test("retrieve categories with searchstring", async () => {
-//     prismaMock.category.findMany.mockResolvedValue(expectedCategories);
+describe("Get item by id", () => {
+  test("retrieve item by id", async () => {
+    let itemId = "40c05336-daa7-439c-b1b4-e7f8f9c9cac0";
+    prismaMock.item.findFirst.mockResolvedValue(expectedItem);
 
-//     let result = await categoryServices.getCategories(
-//       new PageList("sample", undefined, undefined, undefined)
-//     );
-//     expect(result.length).toBe(2);
-//   });
-// });
+    await expect(itemService.getItemByid(itemId)).resolves.toEqual({
+      id: 1,
+      name: "Ipad Air",
+      description: "Ipad Air",
+      uuid: "dsad-3213-das213-adsa",
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      deletedAt: null,
+      isDraft: false,
+      isDeleted: null,
+    });
+  });
+});
+
+describe("Get items", () => {
+  test("retrieve items", async () => {
+    prismaMock.item.findMany.mockResolvedValue(expectedItems);
+
+    let result = await itemService.getItems(
+      new PageList("", undefined, undefined, undefined)
+    );
+    expect(result.length).toBe(3);
+  });
+
+  test("retrieve items with searchstring", async () => {
+    prismaMock.item.findMany.mockResolvedValue(expectedItems);
+
+    let result = await itemService.getItems(
+      new PageList("sample", undefined, undefined, undefined)
+    );
+    expect(result.length).toBe(3);
+  });
+
+  test("retrieve items with searchstring and isDraft filter", async () => {
+    prismaMock.item.findMany.mockResolvedValue(expectedItems);
+
+    let result = await itemService.getItems(
+      new PageList("sample", undefined, undefined, undefined),
+      false
+    );
+    expect(result.length).toBe(3);
+  });
+});

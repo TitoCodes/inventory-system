@@ -184,7 +184,7 @@ class ItemServices {
           });
       });
     };
-    let performValidation = async (existingItem: any) => {
+    let validate = async (existingItem: any) => {
       return new Promise(async (resolve: any, reject: any) => {
         {
           if (existingItem === null) {
@@ -220,7 +220,7 @@ class ItemServices {
 
     let result = new Promise<Boolean>(async (resolve, reject) => {
       await findExistingItem(model)
-        .then(performValidation)
+        .then(validate)
         .then(persistUpdatedItem)
         .then((result) => resolve(result))
         .catch((error) => {
@@ -237,30 +237,58 @@ class ItemServices {
    * @returns Boolean
    */
   async deleteItem(id: string) {
-    const itemData = await prisma.item.findUnique({
-      where: { uuid: id },
-      select: {
-        id: true,
-      },
+    let findExistingItem = () => {
+      return new Promise<any>(async (resolve, reject) => {
+        await prisma.item
+          .findUnique({
+            where: { uuid: id },
+            select: {
+              id: true,
+            },
+          })
+          .then((result) => resolve(result))
+          .catch((error) => reject(error));
+      });
+    };
+
+    let validate = (itemData: any) => {
+      return new Promise((resolve, reject) => {
+        if (itemData === null) {
+          reject(Error(`${id} id is not an existing item`));
+        }
+        resolve(itemData);
+      });
+    };
+
+    let persistDeletedItem = async (itemData: any) => {
+      return new Promise<Boolean>(async (resolve, reject) => {
+        await prisma.item
+          .update({
+            select: {
+              uuid: true,
+            },
+            where: { id: itemData.id },
+            data: {
+              isDeleted: true,
+              deletedAt: new Date(),
+              updatedAt: new Date(),
+            },
+          })
+          .then(() => resolve(true))
+          .catch((error) => reject(error));
+      });
+    };
+    
+    let result = new Promise<Boolean>(async (resolve, reject) => {
+      await findExistingItem()
+        .then(validate)
+        .then(persistDeletedItem)
+        .then((result) => resolve(result))
+        .catch((error) => {
+          reject(error);
+        });
     });
-
-    if (itemData === null) {
-      throw Error(`${id} id is not an existing item`);
-    }
-
-    await prisma.item.update({
-      select: {
-        uuid: true,
-      },
-      where: { id: itemData.id },
-      data: {
-        isDeleted: true,
-        deletedAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
-    return true;
+    return result;
   }
 
   /**
