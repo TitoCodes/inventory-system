@@ -7,7 +7,7 @@ import { CreateCategoryDto } from "../dto/category/createCategory.dto";
 class CategoryServices {
   /**
    * Get categories by searchstring and pagination
-   * 
+   *
    * @param pageList pageList object
    * @returns List of Categories with pagination
    */
@@ -67,7 +67,7 @@ class CategoryServices {
 
   /**
    * Create a new category
-   * 
+   *
    * @param model CreateCategoryDto
    * @returns Boolean
    */
@@ -82,19 +82,25 @@ class CategoryServices {
       throw Error(`Category name ${category.name} already exist.`);
     }
 
-    await prisma.category.create({
-      data: {
-        name,
-        description,
-      },
+    let result = new Promise<Boolean>(async (resolve) => {
+      await prisma.category
+        .create({
+          data: {
+            name,
+            description,
+          },
+        })
+        .then(() => {
+          resolve(true);
+        });
     });
 
-    return true;
+    return result;
   }
 
   /**
    * Update an existing category
-   * 
+   *
    * @param model UpdateCategoryDto
    * @returns Boolean
    */
@@ -131,7 +137,7 @@ class CategoryServices {
 
   /**
    * Delete a category
-   * 
+   *
    * @param id uuid of the category
    * @returns Boolean
    */

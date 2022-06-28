@@ -46,7 +46,10 @@ PUT {{host}}/item/{{itemId}} HTTP/1.1
 content-type: application/json
 
 {
-    "isDraft":false
+    "name": "HTC Pad",
+    "description": "HTC tablet",
+    "categoryId":"78889810-e748-44b1-b4f7-e020bc3ef090",
+    "isDraft":true
 }
 
 ###

@@ -51,8 +51,9 @@ describe("Create category", () => {
     prismaMock.category.findUnique.mockResolvedValue(null);
     prismaMock.category.create.mockResolvedValue(expectedCategory);
 
-    let result = await categoryServices.createCategory(expectedCategory);
-    expect(result).toBe(true);
+    await categoryServices.createCategory(expectedCategory).then((result) => {
+      expect(result).toBe(true);
+    });
   });
 
   test("should throw category name already exists error", async () => {
