@@ -5,8 +5,8 @@ import CategoryServices from "../../../src/service/category.service";
 let categoryServices: CategoryServices;
 let createdAt: Date;
 let updatedAt: Date;
-let expectedCategory;
-let expectedCategories;
+let expectedCategory:any;
+let expectedCategories:any;
 
 beforeAll(() => {
   categoryServices = new CategoryServices();
@@ -51,8 +51,9 @@ describe("Create category", () => {
     prismaMock.category.findUnique.mockResolvedValue(null);
     prismaMock.category.create.mockResolvedValue(expectedCategory);
 
-    let result = await categoryServices.createCategory(expectedCategory);
-    expect(result).toBe(true);
+    await categoryServices.createCategory(expectedCategory).then((result) => {
+      expect(result).toBe(true);
+    });
   });
 
   test("should throw category name already exists error", async () => {
@@ -63,6 +64,25 @@ describe("Create category", () => {
       categoryServices.createCategory(expectedCategory)
     ).rejects.toThrowError(
       `Category name ${expectedCategory.name} already exist.`
+    );
+  });
+
+  test("should throw error from prisma.create", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findUnique.mockResolvedValue(null);
+    prismaMock.category.create.mockRejectedValue(error);
+
+    await expect(categoryServices.createCategory(expectedCategories)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
+
+  test("should throw error from prisma.findUnique", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findUnique.mockRejectedValue(error);
+
+    await expect(categoryServices.createCategory(expectedCategories)).rejects.toThrowError(
+      `Something went wrong`
     );
   });
 });
@@ -86,6 +106,25 @@ describe("Update category", () => {
       `${expectedCategory.uuid} id is not an existing category`
     );
   });
+
+  test("should throw error from prisma.create", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findUnique.mockResolvedValue(expectedCategories);
+    prismaMock.category.update.mockRejectedValue(error);
+
+    await expect(categoryServices.updateCategory(expectedCategories)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
+
+  test("should throw error from prisma.findUnique", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findUnique.mockRejectedValue(error);
+
+    await expect(categoryServices.updateCategory(expectedCategories)).rejects.toThrowError(
+      `Something went wrong`
+    );
+  });
 });
 
 describe("Delete category", () => {
@@ -104,6 +143,16 @@ describe("Delete category", () => {
       categoryServices.deleteCategory(expectedCategory.uuid)
     ).rejects.toThrowError(
       `${expectedCategory.uuid} id is not an existing category`
+    );
+  });
+
+  test("should throw error from prisma.delete", async () => {
+    let error = new Error(`Something went wrong`);
+    prismaMock.category.findUnique.mockResolvedValue(expectedCategories);
+    prismaMock.category.update.mockRejectedValue(error);
+
+    await expect(categoryServices.deleteCategory(expectedCategories)).rejects.toThrowError(
+      `Something went wrong`
     );
   });
 });

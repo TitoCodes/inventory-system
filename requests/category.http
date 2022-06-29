@@ -1,4 +1,4 @@
-@categoryId = 40c05336-daa7-439c-b1b4-e7f8f9c9cac0
+@categoryId = ad8eb1f1-884c-49f9-b532-db5f06678efe
 @categoryName = toys
 @toBeDeletedCategoryId = 246867ec-d565-4c63-a0ec-c3e1090af120
 
@@ -9,8 +9,8 @@ POST {{host}}/category HTTP/1.1
 content-type: application/json
 
 {
-    "name": "Deleted Category",
-    "description": "This will be deleted"
+    "name": "Tablet",
+    "description": "Tablet"
 }
 
 ###

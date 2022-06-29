@@ -5,6 +5,12 @@ import { UpdateCategoryDto } from "../dto/category/updateCategory.dto";
 import { CreateCategoryDto } from "../dto/category/createCategory.dto";
 
 class CategoryServices {
+  /**
+   * Get categories by searchstring and pagination
+   *
+   * @param pageList pageList object
+   * @returns List of Categories with pagination
+   */
   async getCategories(pageList: PageList<Category>) {
     const { searchString, skip, take, orderBy } = pageList;
 
@@ -38,6 +44,11 @@ class CategoryServices {
     return categories;
   }
 
+  /**
+   * Get category by uuid
+   * @param id uuid of the category
+   * @returns Category
+   */
   async getCategoryByid(id: string) {
     return await prisma.category.findFirst({
       where: {
@@ -54,83 +65,156 @@ class CategoryServices {
     });
   }
 
+  /**
+   * Create a new category
+   *
+   * @param model CreateCategoryDto
+   * @returns Boolean
+   */
   async createCategory(model: CreateCategoryDto) {
     let { name, description } = model;
 
-    const category = await prisma.category.findUnique({
-      where: { name: String(name) },
+    let ensureCategoryNameIsUnique = async () => {
+      return new Promise(async (resolve, reject) => {
+        await prisma.category
+          .findUnique({
+            where: { name: String(name) },
+          })
+          .then((category) => {
+            if (category !== null) {
+              reject(Error(`Category name ${category.name} already exist.`));
+            }
+            resolve(category);
+          })
+          .catch((error) => reject(error));
+      });
+    };
+
+    let persistCategory = async () => {
+      return new Promise<Boolean>(async (resolve, reject) => {
+        await prisma.category
+          .create({
+            data: {
+              name,
+              description,
+            },
+          })
+          .then(() => {
+            resolve(true);
+          })
+          .catch((error) => reject(error));
+      });
+    };
+
+    let result = new Promise<Boolean>(async (resolve, reject) => {
+      await ensureCategoryNameIsUnique()
+        .then(persistCategory)
+        .then(() => {
+          resolve(true);
+        })
+        .catch((error) => reject(error));
     });
 
-    if (category !== null) {
-      throw Error(`Category name ${category.name} already exist.`);
-    }
-
-    await prisma.category.create({
-      data: {
-        name,
-        description,
-      },
-    });
-
-    return true;
+    return result;
   }
 
+  /**
+   * Update an existing category
+   *
+   * @param model UpdateCategoryDto
+   * @returns Boolean
+   */
   async updateCategory(model: UpdateCategoryDto) {
-    const categoryData = await prisma.category.findUnique({
-      where: { uuid: model.uuid },
-      select: {
-        id: true,
-      },
+    let persistUpdatedCategory = async (category: any) => {
+      return new Promise<any>(async (resolve, reject) => {
+        await prisma.category
+          .update({
+            select: {
+              uuid: true,
+              name: true,
+              description: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+            where: { id: category.id },
+            data: {
+              name: model.name,
+              description: model.description,
+              updatedAt: new Date(),
+            },
+          })
+          .then((result) => resolve(result))
+          .catch((error) => reject(error));
+      });
+    };
+    let result = new Promise<any>(async (resolve, reject) => {
+      await this.findExistingCategory(model.uuid)
+        .then(persistUpdatedCategory)
+        .then((result) => resolve(result))
+        .catch((error) => {
+          reject(error);
+        });
     });
 
-    if (categoryData === null) {
-      throw Error(`${model.uuid} id is not an existing category`);
-    }
-
-    const updatedcategory = await prisma.category.update({
-      select: {
-        uuid: true,
-        name: true,
-        description: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      where: { id: categoryData.id },
-      data: {
-        name: model.name,
-        description: model.description,
-        updatedAt: new Date(),
-      },
-    });
-
-    return updatedcategory;
+    return result;
   }
 
+  /**
+   * Delete a category
+   *
+   * @param id uuid of the category
+   * @returns Boolean
+   */
   async deleteCategory(id: string) {
-    const categoryData = await prisma.category.findUnique({
-      where: { uuid: id },
-      select: {
-        id: true,
-      },
+    let persistDeletedCategory = async (category) => {
+      return new Promise<Boolean>(async (resolve, reject) => {
+        await prisma.category
+          .update({
+            select: {
+              uuid: true,
+            },
+            where: { id: category.id },
+            data: {
+              isDeleted: true,
+              deletedAt: new Date(),
+              updatedAt: new Date(),
+            },
+          })
+          .then((result) => resolve(true))
+          .catch((error) => reject(error));
+      });
+    };
+    
+    let result = new Promise<Boolean>(async (resolve, reject) => {
+      await this.findExistingCategory(id)
+        .then(persistDeletedCategory)
+        .then((result) => resolve(result))
+        .catch((error) => {
+          reject(error);
+        });
     });
-
-    if (categoryData === null) {
-      throw Error(`${id} id is not an existing category`);
-    }
-
-    await prisma.category.update({
-      select: {
-        uuid: true,
-      },
-      where: { id: categoryData.id },
-      data: {
-        isDeleted: true,
-        deletedAt: new Date(),
-        updatedAt: new Date(),
-      },
-    });
-
-    return true;
+    return result;
   }
+
+  private async findExistingCategory (id:string) {
+    return new Promise(async (resolve, reject) => {
+      await prisma.category
+        .findUnique({
+          where: { uuid: id },
+          select: {
+            id: true,
+          },
+        })
+        .then((category) => {
+          if (category === null) {
+            reject(Error(`${id} id is not an existing category`));
+          }
+          resolve(category);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
 }
 export default CategoryServices;

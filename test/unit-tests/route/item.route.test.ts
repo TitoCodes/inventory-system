@@ -1,115 +1,139 @@
-import CategoryService from "../../../src/service/category.service";
+import ItemService from "../../../src/service/item.service";
 import request from "supertest";
 import app from "../../../src/app";
 
-let expectedCategory:any;
-let expectedCategories:any;
+let itemService: ItemService;
+let expectedItem: any;
+let expectedItems: any;
 let createdAt: Date;
 let updatedAt: Date;
 
 beforeAll(() => {
+  itemService = new ItemService();
   createdAt = new Date();
   updatedAt = new Date();
-  expectedCategory = {
+  expectedItem = {
     id: 1,
-    name: "category",
-    description: "sample description",
+    name: "Ipad Air",
+    description: "Ipad Air",
     uuid: "dsad-3213-das213-adsa",
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    isDraft: false,
     deletedAt: null,
     isDeleted: null,
   };
-  expectedCategories = [
+  expectedItems = [
     {
-      name: "sample",
-      description: "rovering rover",
+      id: 1,
+      name: "Sample item",
+      description: "Sample item",
       uuid: "dsad-3213-das213-adsa",
       createdAt: createdAt,
       updatedAt: updatedAt,
+      isDraft: true,
+      deletedAt: null,
+      isDeleted: null,
     },
     {
-      name: "sample 2",
-      description: "Samplling sample",
+      id: 2,
+      name: "Sample item 2",
+      description: "Sample item 2",
       uuid: "adsad-3213-das213-adsa",
       createdAt: createdAt,
       updatedAt: updatedAt,
+      deletedAt: null,
+      isDeleted: null,
+      isDraft: false,
+    },
+    {
+      id: 3,
+      name: "Sample item 3",
+      description: "Sample item 3",
+      uuid: "adsad-3213-das213-ljsqw3",
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      deletedAt: null,
+      isDeleted: null,
+      isDraft: null,
     },
   ];
 });
 
-describe("Get /category", () => {
-  test("should return categories", async () => {
+describe("Get /item", () => {
+  test("should return items", async () => {
     jest
-      .spyOn(CategoryService.prototype, "getCategories")
-      .mockResolvedValue(expectedCategories);
+      .spyOn(ItemService.prototype, "getItems")
+      .mockResolvedValue(expectedItems);
 
     let response = await request(app)
-      .get("/category")
+      .get("/item")
       .set("Accept", "application/json");
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(3);
   });
 
   test("should return status code 400", async () => {
     jest
-      .spyOn(CategoryService.prototype, "getCategories")
+      .spyOn(ItemService.prototype, "getItems")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .get("/category")
+      .get("/item")
       .set("Accept", "application/json");
 
     expect(response.status).toBe(400);
   });
 });
 
-describe("Get /category/:id", () => {
-  test("should return a category", async () => {
+describe("Get /item:id", () => {
+  test("should return an item", async () => {
     jest
-      .spyOn(CategoryService.prototype, "getCategoryByid")
-      .mockResolvedValue(expectedCategory);
+      .spyOn(ItemService.prototype, "getItemByid")
+      .mockResolvedValue(expectedItem);
 
     let response = await request(app)
-      .get("/category/1")
+      .get("/item/1")
       .set("Accept", "application/json");
 
     expect(response.status).toEqual(200);
-    expect(response.body.name).toEqual(expectedCategory.name);
-    expect(response.body.description).toEqual(expectedCategory.description);
+    expect(response.body.name).toEqual(expectedItem.name);
+    expect(response.body.description).toEqual(expectedItem.description);
     expect(response.body.createdAt).toEqual(
-      expectedCategory.createdAt.toISOString()
+      expectedItem.createdAt.toISOString()
     );
     expect(response.body.updatedAt).toEqual(
-      expectedCategory.updatedAt.toISOString()
+      expectedItem.updatedAt.toISOString()
     );
-    expect(response.body.uuid).toEqual(expectedCategory.uuid);
+    expect(response.body.uuid).toEqual(expectedItem.uuid);
+    expect(response.body.isDraft).toEqual(expectedItem.isDraft);
+    expect(response.body.deletedAt).toEqual(expectedItem.deletedAt);
   });
 
   test("should receive status code 400", async () => {
     jest
-      .spyOn(CategoryService.prototype, "getCategoryByid")
+      .spyOn(ItemService.prototype, "getItemByid")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .get("/category/1")
+      .get("/item/1")
       .set("Accept", "application/json");
 
     expect(response.status).toBe(400);
   });
 });
 
-describe("Post /category", () => {
+describe("Post /item", () => {
   test("should return status code 201", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
 
     jest
-      .spyOn(CategoryService.prototype, "createCategory")
-      .mockResolvedValue(expectedCategory);
+      .spyOn(ItemService.prototype, "createItem")
+      .mockResolvedValue(expectedItem);
 
     let response = await request(app)
-      .post("/category")
+      .post("/item")
       .send({ name, description })
       .set("Accept", "application/json");
 
@@ -117,13 +141,13 @@ describe("Post /category", () => {
   });
 
   test("should return status code 400", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "createCategory")
+      .spyOn(ItemService.prototype, "createItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .post("/category")
+      .post("/item")
       .send({ name, description })
       .set("Accept", "application/json");
 
@@ -131,13 +155,13 @@ describe("Post /category", () => {
   });
 
   test("should return status code 422 when name is not supplied", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "createCategory")
+      .spyOn(ItemService.prototype, "createItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .post("/category")
+      .post("/item")
       .send({ undefined, description })
       .set("Accept", "application/json");
 
@@ -146,13 +170,13 @@ describe("Post /category", () => {
   });
 
   test("should return status 422 code when description is not supplied", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "createCategory")
+      .spyOn(ItemService.prototype, "createItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .post("/category")
+      .post("/item")
       .send({ name, undefined })
       .set("Accept", "application/json");
 
@@ -161,15 +185,15 @@ describe("Post /category", () => {
   });
 });
 
-describe("Update /category/:id", () => {
+describe("Update /item/:id", () => {
   test("should return 204 status code", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "updateCategory")
-      .mockResolvedValue(expectedCategory);
+      .spyOn(ItemService.prototype, "updateItem")
+      .mockResolvedValue(expectedItem);
 
     let response = await request(app)
-      .put("/category/1")
+      .put("/item/1")
       .send({ name, description })
       .set("Accept", "application/json");
 
@@ -177,13 +201,13 @@ describe("Update /category/:id", () => {
   });
 
   test("should return status code 400", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "updateCategory")
+      .spyOn(ItemService.prototype, "updateItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .put("/category/1")
+      .put("/item/1")
       .send({ name, description })
       .set("Accept", "application/json");
 
@@ -191,13 +215,13 @@ describe("Update /category/:id", () => {
   });
 
   test("should return status code 422 when name is not supplied", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "updateCategory")
+      .spyOn(ItemService.prototype, "updateItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .put("/category/1")
+      .put("/item/1")
       .send({ undefined, description })
       .set("Accept", "application/json");
 
@@ -206,13 +230,13 @@ describe("Update /category/:id", () => {
   });
 
   test("should return status code 422 when description is not supplied", async () => {
-    let { name, description } = expectedCategory;
+    let { name, description } = expectedItem;
     jest
-      .spyOn(CategoryService.prototype, "updateCategory")
+      .spyOn(ItemService.prototype, "updateItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .put("/category/1")
+      .put("/item/1")
       .send({ name, undefined })
       .set("Accept", "application/json");
 
@@ -221,14 +245,14 @@ describe("Update /category/:id", () => {
   });
 });
 
-describe("Delete /category/:id", () => {
+describe("Delete /item:id", () => {
   test("should return status code 204", async () =>{
     jest
-      .spyOn(CategoryService.prototype, "deleteCategory")
-      .mockResolvedValue(expectedCategory);
+      .spyOn(ItemService.prototype, "deleteItem")
+      .mockResolvedValue(expectedItem);
 
     let response = await request(app)
-      .delete("/category/1")
+      .delete("/item/1")
       .set("Accept", "application/json");
 
     expect(response.status).toBe(204);
@@ -236,11 +260,11 @@ describe("Delete /category/:id", () => {
 
   test("should return status code 422 when id is not supplied", async () =>{
     jest
-      .spyOn(CategoryService.prototype, "deleteCategory")
+      .spyOn(ItemService.prototype, "deleteItem")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
-      .delete("/category/1")
+      .delete("/item/1")
       .set("Accept", "application/json");
 
     expect(response.status).toBe(400);
