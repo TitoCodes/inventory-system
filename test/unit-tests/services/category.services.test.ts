@@ -5,8 +5,8 @@ import CategoryServices from "../../../src/service/category.service";
 let categoryServices: CategoryServices;
 let createdAt: Date;
 let updatedAt: Date;
-let expectedCategory;
-let expectedCategories;
+let expectedCategory:any;
+let expectedCategories:any;
 
 beforeAll(() => {
   categoryServices = new CategoryServices();

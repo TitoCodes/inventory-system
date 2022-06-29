@@ -5,8 +5,8 @@ import ItemService from "../../../src/service/item.service";
 let itemService: ItemService;
 let createdAt: Date;
 let updatedAt: Date;
-let expectedItem;
-let expectedItems;
+let expectedItem:any;
+let expectedItems:any;
 
 beforeAll(() => {
   itemService = new ItemService();
