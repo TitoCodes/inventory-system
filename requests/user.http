@@ -1,0 +1,63 @@
+@toBeDeletedId = 4009de94-e81c-4383-ba53-7faadb9c9984
+@toFetchId = f346dd8a-afec-4f97-98b0-7280a10614ae
+
+@toBeDeactivatedId = c3ddf5e1-4b41-4a06-ab1f-06d17491fb5f
+###
+# Get users
+###
+GET   {{host}}/user?searchstring=kloy&page=1&pageSize=2 HTTP/1.1
+content-type: application/json
+
+###
+# Get user by id
+###
+GET   {{host}}/user/{{toFetchId}} HTTP/1.1
+content-type: application/json
+
+###
+# Create a new user
+###
+POST {{host}}/user HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "Joey",
+    "middleName": "D",
+    "lastName":"Turner",
+    "email":"klosy@nbsx.com",
+    "sex":"F",
+    "birthDate":"1992-04-28"
+}
+
+###
+# Update an existing user
+###
+PUT {{host}}/user HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "Stepheann",
+    "middleName": "Warden",
+    "lastName":"Corry",
+    "email":"test@nbx.com",
+    "sex":"M",
+    "birthDate":"1992-03-29"
+}
+
+###
+# Delete an existing user
+###
+DELETE  {{host}}/user/{{toBeDeletedId}} HTTP/1.1
+content-type: application/json
+
+###
+# Deactivate an existing user
+###
+POST  {{host}}/user/deactivate/{{toBeDeactivatedId}} HTTP/1.1
+content-type: application/json
+
+###
+# Activate an existing user
+###
+POST  {{host}}/user/activate/{{toBeDeactivatedId}} HTTP/1.1
+content-type: application/json

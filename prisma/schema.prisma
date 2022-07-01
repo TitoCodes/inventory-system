@@ -8,18 +8,30 @@ datasource db {
 }
 
 model User {
-  id            Int          @id @default(autoincrement())
-  uuid          String       @default(uuid())
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  email         String       @unique
-  userSecret    UserSecret?
-  profile       UserProfile?
-  isActive      Boolean?
-  activatedAt   DateTime
-  deactivatedAt DateTime
-  otp           String
-  userRole      Role         @default(SYSTEMUSER)
+  id         Int          @id @default(autoincrement())
+  uuid       String       @unique @default(uuid())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  email      String       @unique
+  userSecret UserSecret?
+  profile    UserProfile?
+
+  updatedBy Int?
+  createdBy Int
+
+  isActive    Boolean?
+  activatedAt DateTime?
+  otp         String?
+
+  isDeleted Boolean?
+  deletedBy Int?
+  deletedAt DateTime?
+
+  isDeactivated Boolean?
+  deactivatedAt DateTime?
+  deactivatedBy Int?
+
+  userRole      Role @default(SYSTEMUSER)
   userAddressId Int?
   userContactId Int?
 }
@@ -49,7 +61,8 @@ model UserProfile {
   uuid       String   @default(uuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  updatedBy  Int
+  updatedBy  Int?
+  createdBy  Int
   firstName  String   @db.VarChar(750)
   middleName String   @db.VarChar(750)
   lastName   String   @db.VarChar(750)
@@ -94,7 +107,7 @@ model Item {
   description String    @db.VarChar(2500)
   isDraft     Boolean?
   isDeleted   Boolean?
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   itemPrice   Price?
 }
@@ -125,8 +138,8 @@ model Category {
 }
 
 enum Sex {
-  MALE
-  FEMALE
+  M
+  F
 }
 
 enum Role {
