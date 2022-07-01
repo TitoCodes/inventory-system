@@ -103,7 +103,7 @@ describe("Update category", () => {
     await expect(
       categoryServices.updateCategory(expectedCategory)
     ).rejects.toThrowError(
-      `${expectedCategory.uuid} id is not an existing category`
+      `${expectedCategory.uuid} uuid is not an existing category`
     );
   });
 
@@ -142,7 +142,7 @@ describe("Delete category", () => {
     await expect(
       categoryServices.deleteCategory(expectedCategory.uuid)
     ).rejects.toThrowError(
-      `${expectedCategory.uuid} id is not an existing category`
+      `${expectedCategory.uuid} uuid is not an existing category`
     );
   });
 
@@ -162,7 +162,7 @@ describe("Get category by id", () => {
     let categoryId = "40c05336-daa7-439c-b1b4-e7f8f9c9cac0";
     prismaMock.category.findFirst.mockResolvedValue(expectedCategory);
 
-    await expect(categoryServices.getCategoryByid(categoryId)).resolves.toEqual(
+    await expect(categoryServices.getCategoryByUuid(categoryId)).resolves.toEqual(
       {
         id: 1,
         name: "category",

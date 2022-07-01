@@ -46,13 +46,13 @@ class CategoryServices {
 
   /**
    * Get category by uuid
-   * @param id uuid of the category
+   * @param uuid uuid of the category
    * @returns Category
    */
-  async getCategoryByid(id: string) {
+  async getCategoryByUuid(uuid: string) {
     return await prisma.category.findFirst({
       where: {
-        uuid: id,
+        uuid: uuid,
         isDeleted: null,
       },
       select: {
@@ -162,10 +162,10 @@ class CategoryServices {
   /**
    * Delete a category
    *
-   * @param id uuid of the category
+   * @param uuid uuid of the category
    * @returns Boolean
    */
-  async deleteCategory(id: string) {
+  async deleteCategory(uuid: string) {
     let persistDeletedCategory = async (category) => {
       return new Promise<Boolean>(async (resolve, reject) => {
         await prisma.category
@@ -180,13 +180,13 @@ class CategoryServices {
               updatedAt: new Date(),
             },
           })
-          .then((result) => resolve(true))
+          .then(() => resolve(true))
           .catch((error) => reject(error));
       });
     };
     
     let result = new Promise<Boolean>(async (resolve, reject) => {
-      await this.findExistingCategory(id)
+      await this.findExistingCategory(uuid)
         .then(persistDeletedCategory)
         .then((result) => resolve(result))
         .catch((error) => {
@@ -196,18 +196,18 @@ class CategoryServices {
     return result;
   }
 
-  private async findExistingCategory (id:string) {
+  private async findExistingCategory (uuid:string) {
     return new Promise(async (resolve, reject) => {
       await prisma.category
         .findUnique({
-          where: { uuid: id },
+          where: { uuid: uuid },
           select: {
             id: true,
           },
         })
         .then((category) => {
           if (category === null) {
-            reject(Error(`${id} id is not an existing category`));
+            reject(Error(`${uuid} uuid is not an existing category`));
           }
           resolve(category);
         })

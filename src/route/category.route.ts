@@ -25,11 +25,11 @@ router.get("/", async (req: any, res: any) => {
     });
 });
 
-router.get(`/:id`, async (req: any, res: any) => {
-  const { id } = req.params;
+router.get(`/:uuid`, async (req: any, res: any) => {
+  const { uuid } = req.params;
 
   await categoryServices
-    .getCategoryByid(id)
+    .getCategoryByUuid(uuid)
     .then((result) => {
       res.json(result);
     })
@@ -55,11 +55,11 @@ router.post(
   }
 );
 
-router.delete(`/:id`, async (req: any, res: any) => {
-  const { id } = req.params;
+router.delete(`/:uuid`, async (req: any, res: any) => {
+  const { uuid } = req.params;
 
   await categoryServices
-    .deleteCategory(id)
+    .deleteCategory(uuid)
     .then(() => {
       res.status(204).json();
     })
@@ -69,14 +69,14 @@ router.delete(`/:id`, async (req: any, res: any) => {
 });
 
 router.put(
-  "/:id",
+  "/:uuid",
   Validator("updateCategory"),
   async (req: any, res: any) => {
-    const { id } = req.params;
+    const { uuid } = req.params;
     const { name, description } = req.body;
 
     await categoryServices
-      .updateCategory(new UpdateCategoryDto(name, description, id))
+      .updateCategory(new UpdateCategoryDto(name, description, uuid))
       .then(() => {
         res.status(204).json();
       })
