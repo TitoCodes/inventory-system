@@ -5,7 +5,7 @@
 ###
 # Get users
 ###
-GET   {{host}}/user?searchstring=kloy&page=1&pageSize=2 HTTP/1.1
+GET   {{host}}/user HTTP/1.1
 content-type: application/json
 
 ###
@@ -21,10 +21,10 @@ POST {{host}}/user HTTP/1.1
 content-type: application/json
 
 {
-    "firstName": "Joey",
-    "middleName": "D",
-    "lastName":"Turner",
-    "email":"klosy@nbsx.com",
+    "firstName": "Limbs",
+    "middleName": "Ar",
+    "lastName":"Dev",
+    "email":"kdslosy@nbsx.com",
     "sex":"F",
     "birthDate":"1992-04-28"
 }
@@ -53,11 +53,11 @@ content-type: application/json
 ###
 # Deactivate an existing user
 ###
-POST  {{host}}/user/deactivate/{{toBeDeactivatedId}} HTTP/1.1
+PUT  {{host}}/user/deactivate/{{toBeDeactivatedId}} HTTP/1.1
 content-type: application/json
 
 ###
 # Activate an existing user
 ###
-POST  {{host}}/user/activate/{{toBeDeactivatedId}} HTTP/1.1
+PUT  {{host}}/user/activate/{{toBeDeactivatedId}} HTTP/1.1
 content-type: application/json

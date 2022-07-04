@@ -51,11 +51,11 @@ router.get(`/:uuid`, async (req: any, res: any) => {
 });
 
 router.post(`/`, Validator("createUser"), async (req: any, res: any) => {
-  const { firstName, middleName, lastName, email, sex, birthDate } = req.body;
+  const user : CreateUserDto = req.body ;
 
   await userServices
     .createUser(
-      new CreateUserDto(firstName, middleName, lastName, email, sex, birthDate)
+      user
     )
     .then(() => {
       res.status(201).json();
@@ -78,7 +78,7 @@ router.delete(`/:uuid`, async (req: any, res: any) => {
     });
 });
 
-router.post(`/deactivate/:uuid`, async (req: any, res: any) => {
+router.put(`/deactivate/:uuid`, async (req: any, res: any) => {
   const { uuid } = req.params;
 
   await userServices
@@ -91,7 +91,7 @@ router.post(`/deactivate/:uuid`, async (req: any, res: any) => {
     });
 });
 
-router.post(`/activate/:uuid`, async (req: any, res: any) => {
+router.put(`/activate/:uuid`, async (req: any, res: any) => {
   const { uuid } = req.params;
 
   await userServices
@@ -105,11 +105,11 @@ router.post(`/activate/:uuid`, async (req: any, res: any) => {
 });
 
 router.put("/", Validator("updateUser"), async (req: any, res: any) => {
-  const { firstName, middleName, lastName, email, sex, birthDate } = req.body;
+  const user : UpdateUserDto = req.body;
 
   await userServices
     .updateUser(
-      new UpdateUserDto(firstName, middleName, lastName, email, sex, birthDate)
+     user
     )
     .then(() => {
       res.status(204).json();
