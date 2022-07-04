@@ -26,11 +26,11 @@ router.get("/", async (req: any, res: any) => {
     });
 });
 
-router.get(`/:id`, async (req: any, res: any) => {
-  const { id } = req.params;
+router.get(`/:uuid`, async (req: any, res: any) => {
+  const { uuid } = req.params;
 
   await itemServices
-    .getItemByid(id)
+    .getItemByUuid(uuid)
     .then((result) => {
       res.json(result);
     })
@@ -52,11 +52,11 @@ router.post(`/`, Validator("createItem"), async (req: any, res: any) => {
     });
 });
 
-router.delete(`/:id`, async (req: any, res: any) => {
-  const { id } = req.params;
+router.delete(`/:uuid`, async (req: any, res: any) => {
+  const { uuid } = req.params;
 
   await itemServices
-    .deleteItem(id)
+    .deleteItem(uuid)
     .then(() => {
       res.status(204).json();
     })
@@ -65,12 +65,12 @@ router.delete(`/:id`, async (req: any, res: any) => {
     });
 });
 
-router.put("/:id", Validator("updateItem"), async (req: any, res: any) => {
-  const { id } = req.params;
+router.put("/:uuid", Validator("updateItem"), async (req: any, res: any) => {
+  const { uuid } = req.params;
   const { name, description, categoryId, isDraft } = req.body;
 
   await itemServices
-    .updateItem(new UpdateItemDto(name, description, categoryId, id, isDraft))
+    .updateItem(new UpdateItemDto(name, description, categoryId, uuid, isDraft))
     .then(() => {
       res.status(204).json();
     })

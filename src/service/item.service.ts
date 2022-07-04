@@ -75,13 +75,13 @@ class ItemServices {
   /**
    * Get item by uuid
    *
-   * @param id uuid of the item
+   * @param uuid uuid of the item
    * @returns Item
    */
-  async getItemByid(id: string) {
+  async getItemByUuid(uuid: string) {
     return await prisma.item.findFirst({
       where: {
-        uuid: id,
+        uuid: uuid,
         isDeleted: null,
       },
       select: {
@@ -138,7 +138,7 @@ class ItemServices {
       });
 
     let result = new Promise<Boolean>(async (resolve, reject) => {
-      await this.getCategoryByUuid(categoryId)
+      await this.GetCategoryByUuid(categoryId)
         .then(persistItem)
         .then((result) => resolve(result))
         .catch((error) => {
@@ -188,10 +188,10 @@ class ItemServices {
       return new Promise(async (resolve: any, reject: any) => {
         {
           if (existingItem === null) {
-            reject(Error(`${model.uuid} id is not an existing item`));
+            reject(Error(`${model.uuid} uuid is not an existing item`));
           }
 
-          await this.getCategoryByUuid(model.categoryId)
+          await this.GetCategoryByUuid(model.categoryId)
             .then(async (category) => {
               resolve(category);
             })
@@ -233,15 +233,15 @@ class ItemServices {
   /**
    * Delete an item
    *
-   * @param id uuid of the item
+   * @param uuid uuid of the item
    * @returns Boolean
    */
-  async deleteItem(id: string) {
+  async deleteItem(uuid: string) {
     let findExistingItem = () => {
       return new Promise<any>(async (resolve, reject) => {
         await prisma.item
           .findUnique({
-            where: { uuid: id },
+            where: { uuid: uuid },
             select: {
               id: true,
             },
@@ -254,7 +254,7 @@ class ItemServices {
     let validate = (itemData: any) => {
       return new Promise((resolve, reject) => {
         if (itemData === null) {
-          reject(Error(`${id} id is not an existing item`));
+          reject(Error(`${uuid} uuid is not an existing item`));
         }
         resolve(itemData);
       });
@@ -292,11 +292,11 @@ class ItemServices {
   }
 
   /**
-   * Get category id
+   * Get category uuid
    * @param uuid uuid of the category
    * @returns Category
    */
-  private async getCategoryByUuid(uuid: string) {
+  private async GetCategoryByUuid(uuid: string) {
     let result = new Promise<any>(async (resolve, reject) => {
       await prisma.category
         .findFirst({
@@ -310,7 +310,7 @@ class ItemServices {
         })
         .then((category) => {
           if (category === null) {
-            reject(Error(`${uuid} id  is not an existing category`));
+            reject(Error(`${uuid} uuid is not an existing category`));
           }
 
           resolve(category);

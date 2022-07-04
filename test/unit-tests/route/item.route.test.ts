@@ -87,10 +87,10 @@ describe("Get /item", () => {
   });
 });
 
-describe("Get /item:id", () => {
+describe("Get /item:uuid", () => {
   test("should return an item", async () => {
     jest
-      .spyOn(ItemService.prototype, "getItemByid")
+      .spyOn(ItemService.prototype, "getItemByUuid")
       .mockResolvedValue(expectedItem);
 
     let response = await request(app)
@@ -113,7 +113,7 @@ describe("Get /item:id", () => {
 
   test("should receive status code 400", async () => {
     jest
-      .spyOn(ItemService.prototype, "getItemByid")
+      .spyOn(ItemService.prototype, "getItemByUuid")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
@@ -185,7 +185,7 @@ describe("Post /item", () => {
   });
 });
 
-describe("Update /item/:id", () => {
+describe("Update /item/:uuid", () => {
   test("should return 204 status code", async () => {
     let { name, description } = expectedItem;
     jest
@@ -245,7 +245,7 @@ describe("Update /item/:id", () => {
   });
 });
 
-describe("Delete /item:id", () => {
+describe("Delete /item:uuid", () => {
   test("should return status code 204", async () =>{
     jest
       .spyOn(ItemService.prototype, "deleteItem")

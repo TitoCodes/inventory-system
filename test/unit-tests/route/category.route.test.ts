@@ -65,10 +65,10 @@ describe("Get /category", () => {
   });
 });
 
-describe("Get /category/:id", () => {
+describe("Get /category/:uuid", () => {
   test("should return a category", async () => {
     jest
-      .spyOn(CategoryService.prototype, "getCategoryByid")
+      .spyOn(CategoryService.prototype, "getCategoryByUuid")
       .mockResolvedValue(expectedCategory);
 
     let response = await request(app)
@@ -89,7 +89,7 @@ describe("Get /category/:id", () => {
 
   test("should receive status code 400", async () => {
     jest
-      .spyOn(CategoryService.prototype, "getCategoryByid")
+      .spyOn(CategoryService.prototype, "getCategoryByUuid")
       .mockRejectedValue(new Error());
 
     let response = await request(app)
@@ -161,7 +161,7 @@ describe("Post /category", () => {
   });
 });
 
-describe("Update /category/:id", () => {
+describe("Update /category/:uuid", () => {
   test("should return 204 status code", async () => {
     let { name, description } = expectedCategory;
     jest
@@ -221,7 +221,7 @@ describe("Update /category/:id", () => {
   });
 });
 
-describe("Delete /category/:id", () => {
+describe("Delete /category/:uuid", () => {
   test("should return status code 204", async () =>{
     jest
       .spyOn(CategoryService.prototype, "deleteCategory")

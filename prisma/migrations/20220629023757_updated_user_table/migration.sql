@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "activatedAt" DROP NOT NULL,
+ALTER COLUMN "deactivatedAt" DROP NOT NULL,
+ALTER COLUMN "otp" DROP NOT NULL;

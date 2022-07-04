@@ -88,13 +88,13 @@ describe("Create item", () => {
     });
   });
 
-  test("should throw category id is not existing error", async () => {
+  test("should throw category uuid is not existing error", async () => {
     prismaMock.category.findFirst.mockResolvedValue(null);
     prismaMock.item.findUnique.mockResolvedValue(null);
     prismaMock.item.create.mockResolvedValue(expectedItem);
 
     await expect(itemService.createItem(newItem)).rejects.toThrowError(
-      `${newItem.categoryId} id  is not an existing category`
+      `${newItem.categoryId} uuid is not an existing category`
     );
   });
 
@@ -139,13 +139,13 @@ describe("Update item", () => {
     expect(result).toBe(true);
   });
 
-  test("should throw category id is not existing error", async () => {
+  test("should throw category uuid is not existing error", async () => {
     prismaMock.category.findFirst.mockResolvedValue(null);
     prismaMock.item.findUnique.mockResolvedValue(expectedItem);
     prismaMock.item.update.mockResolvedValue(expectedItem);
 
     await expect(itemService.updateItem(updateItem)).rejects.toThrowError(
-      `${updateItem.categoryId} id  is not an existing category`
+      `${updateItem.categoryId} uuid is not an existing category`
     );
   });
 
@@ -169,13 +169,13 @@ describe("Update item", () => {
     );
   });
 
-  test("should throw item id is not existing error", async () => {
+  test("should throw item uuid is not existing error", async () => {
     prismaMock.category.findFirst.mockResolvedValue(category);
     prismaMock.item.findUnique.mockResolvedValue(null);
     prismaMock.item.update.mockResolvedValue(expectedItem);
 
     await expect(itemService.updateItem(updateItem)).rejects.toThrowError(
-      `${updateItem.uuid} id is not an existing item`
+      `${updateItem.uuid} uuid is not an existing item`
     );
   });
 });
@@ -194,7 +194,7 @@ describe("Delete item", () => {
     prismaMock.item.findUnique.mockResolvedValue(null);
 
     await expect(itemService.deleteItem(toBeDeletedId)).rejects.toThrowError(
-      `${toBeDeletedId} id is not an existing item`
+      `${toBeDeletedId} uuid is not an existing item`
     );
   });
 
@@ -218,12 +218,12 @@ describe("Delete item", () => {
   });
 });
 
-describe("Get item by id", () => {
-  test("retrieve item by id", async () => {
-    let itemId = "40c05336-daa7-439c-b1b4-e7f8f9c9cac0";
+describe("Get item by uuid", () => {
+  test("retrieve item by uuid", async () => {
+    let itemUuid = "40c05336-daa7-439c-b1b4-e7f8f9c9cac0";
     prismaMock.item.findFirst.mockResolvedValue(expectedItem);
 
-    await expect(itemService.getItemByid(itemId)).resolves.toEqual({
+    await expect(itemService.getItemByUuid(itemUuid)).resolves.toEqual({
       id: 1,
       name: "Ipad Air",
       description: "Ipad Air",
