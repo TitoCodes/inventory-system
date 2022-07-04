@@ -2,7 +2,7 @@ import UserService from "../../../src/service/user.service";
 import request from "supertest";
 import app from "../../../src/app";
 import { CreateUserDto } from "dto/user/createUser.dto";
-import { Role, Sex, User } from "@prisma/client";
+import { Role, Sex } from "@prisma/client";
 import { UpdateUserDto } from "dto/user/updateUser.dto";
 
 let expectedUser: any;
