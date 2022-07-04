@@ -221,6 +221,11 @@ class UserService {
     };
     let validate = (userData: any) => {
       return new Promise((resolve, reject) => {
+        if (userData === null){
+          reject(
+            Error(`${model.email} is not an existing user`)
+          );
+        }
         if (userData.isDeleted) {
           reject(
             Error(`unable to update ${model.email}, already a deleted user`)
@@ -330,7 +335,7 @@ class UserService {
    * Deactivate an existing user
    *
    * @param uuid uuid of the user
-   * @returns
+   * @returns Boolean
    */
   async deactivateUser(uuid: string) {
     let validate = (userData: any) => {
@@ -379,6 +384,12 @@ class UserService {
     return result;
   }
 
+  /**
+   * Activate an existing user
+   *
+   * @param uuid uuid of the user
+   * @returns Boolean
+   */
   async activateUser(uuid: string) {
     let validate = (userData: any) => {
       return new Promise((resolve, reject) => {
@@ -484,8 +495,5 @@ class UserService {
 
     return result;
   }
-
-  async initialActivationOfUser(id: string, otp: string) {}
-  async sendOtpToUser(id: string) {}
 }
 export default UserService;
