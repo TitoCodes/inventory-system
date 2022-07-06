@@ -1,0 +1,9 @@
+# Authenticate user
+###
+POST {{host}}/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "test@email2.com",
+    "password": "Ultraweakpassword"
+}

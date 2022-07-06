@@ -1,5 +1,5 @@
-import { LoginDto } from "dto/authentication/login.dto";
-import { LoginResultDto } from "dto/authentication/loginResult.dto";
+import { LoginDto } from "../dto/authentication/login.dto";
+import { LoginResultDto } from "../dto/authentication/loginResult.dto";
 import tokenHelper from "../helper/token.helper";
 import prisma from "../../prisma/client";
 import bcrypt from "bcrypt";

@@ -3,6 +3,7 @@ import category from "./route/category.route";
 import item from "./route/item.route";
 import user from "./route/user.route";
 import supplier from "./route/supplier.route";
+import authenticate from "./route/authentication.route";
 
 const app = express();
 
@@ -11,5 +12,6 @@ app.use("/category", category);
 app.use("/item", item);
 app.use("/user", user);
 app.use("/supplier", supplier);
+app.use("/", authenticate);
 
 export default app;
