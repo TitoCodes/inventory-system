@@ -114,22 +114,6 @@ class SupplierServices {
       building,
     } = model;
 
-    // let ensureSupplierNameIsUnique = async () => {
-    //   return new Promise(async (resolve, reject) => {
-    //     await prisma.supplier
-    //       .findUnique({
-    //         where: { name: String(name) },
-    //       })
-    //       .then((Supplier) => {
-    //         if (Supplier !== null) {
-    //           reject(Error(`Supplier name ${Supplier.name} already exist.`));
-    //         }
-    //         resolve(Supplier);
-    //       })
-    //       .catch((error) => reject(error));
-    //   });
-    // };
-
     let persistSupplier = async () => {
       return new Promise<Boolean>(async (resolve, reject) => {
         await prisma.supplier
@@ -290,7 +274,7 @@ class SupplierServices {
         })
         .then((Supplier) => {
           if (Supplier === null) {
-            reject(Error(`${uuid} uuid is not an existing Supplier`));
+            reject(Error(`${uuid} uuid is not an existing supplier`));
           }
           resolve(Supplier);
         })
