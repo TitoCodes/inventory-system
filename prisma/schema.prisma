@@ -96,7 +96,6 @@ model Address {
 model UserSecret {
   id           Int      @id @default(autoincrement())
   uuid         String   @default(uuid())
-  email        String   @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   name         String?
