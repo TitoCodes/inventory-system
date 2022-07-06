@@ -1,0 +1,69 @@
+@supplierId = 4caa7fd1-2ec2-4539-bec3-c67324fd540f
+@supplierName = toys
+@toBeDeletedSupplierId = 12b4cba3-1fcb-4318-a861-a0c17e742819
+
+###
+# Create a new supplier
+###
+POST {{host}}/supplier HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Supplier Add Con 4",
+    "description": "A supplier with address and contact details",
+    "country":"Wakanda",
+    "city":"some city",
+    "zipCode":"1600",
+    "street":"some street",
+    "telephoneNumber":"123456789",
+    "mobileNumber":"0123123915"
+}
+
+###
+# Get supplier by id
+###
+GET {{host}}/supplier/{{supplierId}} HTTP/1.1
+content-type: application/json
+
+###
+# Get the suppliers with default pagination and search
+###
+GET {{host}}/supplier HTTP/1.1
+content-type: application/json
+
+###
+# Get the suppliers with pagination
+###
+GET {{host}}/supplier?take=5&skip=0 HTTP/1.1
+content-type: application/json
+
+###
+# Get the suppliers with pagination and search
+###
+GET {{host}}/supplier?searchString=toys&take=5&skip=0 HTTP/1.1
+content-type: application/json
+
+###
+# Update supplier
+###
+PUT {{host}}/supplier/7867a79c-71ce-40ac-bcbb-843d549a8ac0 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Supplier add con",
+    "description": "An updated supplier",
+    "description": "A supplier with address and contact details",
+    "country":"Wakanda",
+    "city":"some city",
+    "zipCode":"1600",
+    "street":"some street",
+    "telephoneNumber":"123456789",
+    "mobileNumber":"0123123915",
+    "building":"with building"
+}
+
+###
+# Delete supplier
+###
+DELETE  {{host}}/supplier/{{toBeDeletedSupplierId}} HTTP/1.1
+content-type: application/json

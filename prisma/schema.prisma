@@ -37,23 +37,30 @@ model User {
 }
 
 model Supplier {
-  id                Int      @id @default(autoincrement())
-  uuid              String   @default(uuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  supplierAddressId Int?
-  supplierContactId Int?
-  name              String   @db.VarChar(300)
-  description       String   @db.VarChar(1000)
+  id              Int       @id @default(autoincrement())
+  uuid            String    @unique @default(uuid())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  supplierContact Contact?  @relation(fields: [contactId], references: [id])
+  supplierAddress Address?  @relation(fields: [addressId], references: [id])
+  name            String    @db.VarChar(300)
+  description     String    @db.VarChar(1000)
+  isDeleted       Boolean?
+  deletedBy       Int?
+  deletedAt       DateTime?
+  contactId       Int?
+  addressId       Int?
 }
 
 model Contact {
-  id              Int      @id @default(autoincrement())
-  uuid            String   @default(uuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  mobileNumber    String
-  telephoneNumber String
+  id              Int        @id @default(autoincrement())
+  uuid            String     @unique @default(uuid())
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime?  @updatedAt
+  updatedBy       Int?
+  mobileNumber    String?
+  telephoneNumber String?
+  Supplier        Supplier[]
 }
 
 model UserProfile {
@@ -73,15 +80,17 @@ model UserProfile {
 }
 
 model Address {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  updatedBy Int
-  country   String
-  city      String
-  zipCode   String
-  address   String
+  id        Int        @id @default(autoincrement())
+  uuid      String     @default(uuid()) @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
+  updatedBy Int?
+  country   String?
+  city      String?
+  zipCode   String?
+  street    String?
+  building  String?
+  Supplier  Supplier[]
 }
 
 model UserSecret {
