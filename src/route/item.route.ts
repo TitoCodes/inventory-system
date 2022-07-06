@@ -6,6 +6,7 @@ import ItemServices from "../service/item.service";
 import { PageList } from "../core/pageList";
 import { Item } from "@prisma/client";
 import Validator from "../middleware/validator";
+import { booleanConverter } from "../helper/argumentConverter.helper";
 
 const router = express.Router();
 let itemServices = new ItemServices();
@@ -16,7 +17,7 @@ router.get("/", async (req: any, res: any) => {
   await itemServices
     .getItems(
       new PageList<Item>(searchString, Number(take), Number(skip), orderBy),
-      isDraft != null ? JSON.parse(isDraft) : null
+      booleanConverter(isDraft)
     )
     .then((result) => {
       res.json(result);
