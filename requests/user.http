@@ -29,6 +29,16 @@ content-type: application/json
     "birthDate":"1992-04-28"
 }
 
+# Sign up a new user
+###
+POST {{host}}/user/sign-up HTTP/1.1
+content-type: application/json
+
+{
+    "email": "test@email2.com",
+    "password": "Ultraweakpassword"
+}
+
 ###
 # Update an existing user
 ###

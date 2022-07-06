@@ -6,6 +6,7 @@ import createUser from "./user/createUser.validator";
 import updateUser from "./user/updateUser.validator";
 import createSupplier from "./supplier/createSupplier.validator";
 import updateSupplier from "./supplier/updateSupplier.validator";
+import signUp from "./user/signUp.validator";
 
 export default {
   createCategory,
@@ -15,5 +16,6 @@ export default {
   createUser,
   updateUser,
   createSupplier,
-  updateSupplier
+  updateSupplier,
+  signUp
 };

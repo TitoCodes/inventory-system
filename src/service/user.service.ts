@@ -3,7 +3,10 @@ import { Prisma, Role, User } from "@prisma/client";
 import { PageList } from "../core/pageList";
 import { CreateUserDto } from "../dto/user/createUser.dto";
 import { UpdateUserDto } from "../dto/user/updateUser.dto";
+import { SignUpDto } from "../dto/user/signUp.dto";
+import bcrypt from "bcrypt";
 
+const saltRounds = Number(process.env.SALT_ROUNDS);
 class UserService {
   /**
    * Get users by searchstring, pagination and filters
@@ -221,10 +224,8 @@ class UserService {
     };
     let validate = (userData: any) => {
       return new Promise((resolve, reject) => {
-        if (userData === null){
-          reject(
-            Error(`${model.email} is not an existing user`)
-          );
+        if (userData === null) {
+          reject(Error(`${model.email} is not an existing user`));
         }
         if (userData.isDeleted) {
           reject(
@@ -397,7 +398,9 @@ class UserService {
           reject(Error(`${uuid} uuid is not an existing user`));
         }
         if (!userData.isDeactivated) {
-          reject(Error(`unable to activate ${uuid}, user is already activated`));
+          reject(
+            Error(`unable to activate ${uuid}, user is already activated`)
+          );
         }
         resolve(userData);
       });
@@ -436,6 +439,48 @@ class UserService {
   }
 
   /**
+   * Sign up a new user with credentials
+   * 
+   * @param signUpUser SignUpDto
+   * @returns Boolean
+   */
+  async signUp(signUpUser: SignUpDto) {
+    const { email, password } = signUpUser;
+
+    let createNewUser = () => {
+      return new Promise<Boolean>(async (resolve, reject) => {
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const passwordHash = bcrypt.hashSync(password, salt);
+
+        await prisma.user
+          .create({
+            data: {
+              email,
+              userSecret: {
+                create: {
+                  passwordHash,
+                },
+              },
+              createdBy: 0,
+            },
+          })
+          .then(() => resolve(true))
+          .catch(error => reject(error));
+      });
+    };
+
+    let result = new Promise<Boolean>(async (resolve, reject) => {
+      await this.isUserExisting(email)
+        .then(createNewUser)
+        .then((result) => resolve(result))
+        .catch((error) => {
+          reject(error);
+        });
+    });
+    return result;
+  }
+
+  /**
    * Determine if user is existing by email
    * @param email email
    * @returns Boolean
@@ -443,7 +488,7 @@ class UserService {
   private async isUserExisting(email: string) {
     let result = new Promise<Boolean>(async (resolve, reject) => {
       await prisma.user
-        .findFirst({
+        .findUnique({
           where: {
             email: email,
           },
@@ -474,7 +519,7 @@ class UserService {
   private async GetUserByUuid(uuid: string) {
     let result = new Promise(async (resolve, reject) => {
       await prisma.user
-        .findFirst({
+        .findUnique({
           select: {
             id: true,
             isDeactivated: true,

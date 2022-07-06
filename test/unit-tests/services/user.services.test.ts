@@ -105,7 +105,7 @@ describe("Create user", () => {
   };
 
   test("should create a new user", async () => {
-    prismaMock.user.findFirst.mockResolvedValue(null);
+    prismaMock.user.findUnique.mockResolvedValue(null);
     prismaMock.user.create.mockResolvedValue(expectedUser);
 
     await userService.createUser(createUser).then((result) => {
@@ -114,7 +114,7 @@ describe("Create user", () => {
   });
 
   test("should throw an error existing user", async () => {
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
     prismaMock.user.create.mockResolvedValue(expectedUser);
 
     await expect(userService.createUser(createUser)).rejects.toThrowError(
@@ -124,7 +124,7 @@ describe("Create user", () => {
 
   test("should throw error from prisma.create", async () => {
     let error = new Error(`Something went wrong`);
-    prismaMock.user.findFirst.mockResolvedValue(null);
+    prismaMock.user.findUnique.mockResolvedValue(null);
     prismaMock.user.create.mockRejectedValue(error);
 
     await expect(userService.createUser(createUser)).rejects.toThrowError(
@@ -132,9 +132,9 @@ describe("Create user", () => {
     );
   });
 
-  test("should throw error from prisma.findFirst", async () => {
+  test("should throw error from prisma.findUnique", async () => {
     let error = new Error(`Something went wrong`);
-    prismaMock.user.findFirst.mockRejectedValue(error);
+    prismaMock.user.findUnique.mockRejectedValue(error);
 
     await expect(userService.createUser(createUser)).rejects.toThrowError(
       `Something went wrong`
@@ -305,7 +305,7 @@ describe("Get users", () => {
 
 describe("Deactivate user", () => {
   test("should deactivate a user", async () => {
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
     prismaMock.user.update.mockResolvedValue(expectedUser);
 
     let result = await userService.deactivateUser(expectedUser.uuid);
@@ -313,7 +313,7 @@ describe("Deactivate user", () => {
   });
 
   test("should throw not existing error", async () => {
-    prismaMock.user.findFirst.mockResolvedValue(null);
+    prismaMock.user.findUnique.mockResolvedValue(null);
 
     await expect(
       userService.deactivateUser(expectedUser.uuid)
@@ -322,7 +322,7 @@ describe("Deactivate user", () => {
 
   test("should throw user is already deactivated error", async () => {
     expectedUser.isDeactivated = true;
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
 
     await expect(
       userService.deactivateUser(expectedUser.uuid)
@@ -331,9 +331,9 @@ describe("Deactivate user", () => {
     );
   });
 
-  test("should throw error from prisma.findFirst", async () => {
+  test("should throw error from prisma.findUnique", async () => {
     let error = new Error(`Something went wrong`);
-    prismaMock.user.findFirst.mockRejectedValue(error);
+    prismaMock.user.findUnique.mockRejectedValue(error);
 
     await expect(
       userService.deactivateUser(expectedUsers.uuid)
@@ -343,7 +343,7 @@ describe("Deactivate user", () => {
   test("should throw error from prisma.update", async () => {
     expectedUser.isDeactivated = false;
     let error = new Error(`Something went wrong`);
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
     prismaMock.user.update.mockRejectedValue(error);
     
 
@@ -356,7 +356,7 @@ describe("Deactivate user", () => {
 describe("Activate user", () => {
   test("should activate a user", async () => {
     expectedUser.isDeactivated = true;
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
     prismaMock.user.update.mockResolvedValue(expectedUser);
 
     let result = await userService.activateUser(expectedUser.uuid);
@@ -364,7 +364,7 @@ describe("Activate user", () => {
   });
 
   test("should throw not existing error", async () => {
-    prismaMock.user.findFirst.mockResolvedValue(null);
+    prismaMock.user.findUnique.mockResolvedValue(null);
 
     await expect(
       userService.activateUser(expectedUser.uuid)
@@ -373,7 +373,7 @@ describe("Activate user", () => {
 
   test("should throw user is already eactivated error", async () => {
     expectedUser.isDeactivated = false;
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
 
     await expect(
       userService.activateUser(expectedUser.uuid)
@@ -382,10 +382,10 @@ describe("Activate user", () => {
     );
   });
 
-  test("should throw error from prisma.findFirst", async () => {
+  test("should throw error from prisma.findUnique", async () => {
     expectedUser.isDeactivated = true;
     let error = new Error(`Something went wrong`);
-    prismaMock.user.findFirst.mockRejectedValue(error);
+    prismaMock.user.findUnique.mockRejectedValue(error);
 
     await expect(
       userService.activateUser(expectedUsers.uuid)
@@ -394,7 +394,7 @@ describe("Activate user", () => {
 
   test("should throw error from prisma.update", async () => {
     let error = new Error(`Something went wrong`);
-    prismaMock.user.findFirst.mockResolvedValue(expectedUser);
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
     prismaMock.user.update.mockRejectedValue(error);
 
     await expect(

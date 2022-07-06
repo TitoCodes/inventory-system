@@ -7,6 +7,7 @@ import { PageList } from "../core/pageList";
 import { User } from "@prisma/client";
 import Validator from "../middleware/validator";
 import { booleanConverter } from "../helper/argumentConverter.helper";
+import { SignUpDto } from "dto/user/signUp.dto";
 
 const router = express.Router();
 let userServices = new UserServices();
@@ -56,6 +57,22 @@ router.post(`/`, Validator("createUser"), async (req: any, res: any) => {
   await userServices
     .createUser(
       user
+    )
+    .then(() => {
+      res.status(201).json();
+    })
+    .catch((error) => {
+      errorHandler(error, res);
+    });
+});
+
+
+router.post(`/sign-up`, Validator("signUp"), async (req: any, res: any) => {
+  const payload : SignUpDto = req.body ;
+
+  await userServices
+    .signUp(
+      payload
     )
     .then(() => {
       res.status(201).json();

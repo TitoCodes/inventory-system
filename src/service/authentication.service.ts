@@ -6,6 +6,12 @@ import bcrypt from "bcrypt";
 var jwt = require("jsonwebtoken");
 
 class AuthenticationService {
+  /**
+   * Login an existing user
+   *
+   * @param credentials LoginDto
+   * @returns LoginResultDto
+   */
   async login(credentials: LoginDto): Promise<LoginResultDto> {
     let validate = (user: any) => {
       return new Promise(async (resolve, reject) => {
@@ -60,7 +66,7 @@ class AuthenticationService {
       await this.findExistingUser(credentials.email)
         .then(validate)
         .then(createToken)
-        .then((token:string) => resolve(new LoginResultDto(token)))
+        .then((token: string) => resolve(new LoginResultDto(token)))
         .catch((error) => reject(error));
     });
 
