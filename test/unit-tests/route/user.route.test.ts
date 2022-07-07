@@ -4,6 +4,7 @@ import app from "../../../src/app";
 import { CreateUserDto } from "dto/user/createUser.dto";
 import { Role, Sex } from "@prisma/client";
 import { UpdateUserDto } from "dto/user/updateUser.dto";
+import { SignUpDto } from "dto/user/signUp.dto";
 
 let expectedUser: any;
 let expectedUsers: any;
@@ -275,6 +276,69 @@ describe("Post /user", () => {
       `\"sex can only be \`M\` or \`F\` value\" is required`
     );
   });
+});
+
+
+describe("Post /user/sign-up", () => {
+  let signUpPayload: SignUpDto = {
+    email: "sgteas@email.com",
+    password: "some21pas21!"
+  };
+
+  test("should return status code 201", async () => {
+    jest.spyOn(UserService.prototype, "signUp").mockResolvedValue(true);
+
+    let response = await request(app)
+      .post("/user/sign-up")
+      .send(signUpPayload)
+      .set("Accept", "application/json");
+
+    expect(response.status).toEqual(201);
+  });
+
+  test("should return status code 400", async () => {
+    jest
+      .spyOn(UserService.prototype, "signUp")
+      .mockRejectedValue(new Error());
+
+    let response = await request(app)
+      .post("/user/sign-up")
+      .send(signUpPayload)
+      .set("Accept", "application/json");
+
+    expect(response.status).toBe(400);
+  });
+
+  test("should return status code 422 when email is not supplied", async () => {
+    let { password } = signUpPayload;
+    jest
+      .spyOn(UserService.prototype, "signUp")
+      .mockRejectedValue(new Error());
+
+    let response = await request(app)
+      .post("/user/sign-up")
+      .send({ undefined,password })
+      .set("Accept", "application/json");
+
+    expect(response.status).toBe(422);
+    expect(response.body.message).toBe(`\"email\" is required`);
+  });
+
+  test("should return status code 422 when password is not supplied", async () => {
+    let {email } = signUpPayload;
+    jest
+      .spyOn(UserService.prototype, "signUp")
+      .mockRejectedValue(new Error());
+
+    let response = await request(app)
+      .post("/user/sign-up")
+      .send({ email,undefined })
+      .set("Accept", "application/json");
+
+    expect(response.status).toBe(422);
+    expect(response.body.message).toBe(`\"password\" is required`);
+  });
+
 });
 
 describe("Update /user", () => {
