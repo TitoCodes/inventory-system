@@ -3,6 +3,7 @@ import { PageList } from "../../../src/core/pageList";
 import { Role, Sex } from "@prisma/client";
 import UserService from "../../../src/service/user.service";
 import { CreateUserDto } from "dto/user/createUser.dto";
+import { SignUpDto } from "dto/user/signUp.dto";
 
 let userService: UserService;
 let expectedUser: any;
@@ -345,7 +346,6 @@ describe("Deactivate user", () => {
     let error = new Error(`Something went wrong`);
     prismaMock.user.findUnique.mockResolvedValue(expectedUser);
     prismaMock.user.update.mockRejectedValue(error);
-    
 
     await expect(
       userService.deactivateUser(expectedUsers.uuid)
@@ -399,6 +399,39 @@ describe("Activate user", () => {
 
     await expect(
       userService.activateUser(expectedUsers.uuid)
+    ).rejects.toThrowError(`Something went wrong`);
+  });
+});
+
+describe("Sign Up user", () => {
+  let signUpUser: SignUpDto = {
+    email: "test@email.com",
+    password: "somePas@sa21s",
+  };
+
+  test("should sign up a new user", async () => {
+    prismaMock.user.findUnique.mockResolvedValue(null);
+    prismaMock.user.create.mockResolvedValue(expectedUser);
+    let result = await userService.signUp(signUpUser);
+    expect(result).toBe(true);
+  });
+
+  test("should throw not existing error", async () => {
+    prismaMock.user.findUnique.mockResolvedValue(expectedUser);
+
+    await expect(userService.signUp(signUpUser)).rejects.toThrowError(
+      `${signUpUser.email} is an existing user`
+    );
+  });
+
+  test("should throw error from prisma.create", async () => {
+    
+    let error = new Error(`Something went wrong`);
+    prismaMock.user.findUnique.mockResolvedValue(null);
+    prismaMock.user.create.mockRejectedValue(error);
+
+    await expect(
+      userService.signUp(signUpUser)
     ).rejects.toThrowError(`Something went wrong`);
   });
 });
